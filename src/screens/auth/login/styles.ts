@@ -17,7 +17,7 @@ export const getStyles = (theme: any) =>
     },
     input: {
       height: 50,
-      borderColor: '#333333',
+      borderColor: theme.textColor,
       borderWidth: 1,
       borderRadius: 10,
       marginBottom: 15,

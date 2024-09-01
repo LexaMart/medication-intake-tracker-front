@@ -32,7 +32,7 @@ export const getStyles = (theme: any) =>
 export const lightTheme = {
   background: '#FFFFFF',
   text: '#000000',
-  buttonBackground: '#007BFF',
+  buttonBackground: '#FF5722',
   buttonText: '#FFFFFF',
 };
 
