@@ -1,9 +1,17 @@
 import React, {useState} from 'react';
-import {View, TextInput, TouchableOpacity, Text, StatusBar} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  StatusBar,
+  Alert,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store';
-import {saveSession} from '../../../store/slices/auth.slice';
 import {darkTheme, getStyles, lightTheme} from './styles';
+import {validateEmail} from '../../../shared/utils/validateEmail';
+import {registration} from '../../../store/slices/auth.slice';
 
 export default function RegisterScreen({navigation}: {navigation: any}) {
   const [email, setEmail] = useState('');
@@ -17,8 +25,24 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
   const styles = getStyles(theme);
 
   const handleRegister = () => {
-    const user = {email};
-    dispatch(saveSession(user));
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Validation Error', 'All fields are required.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert('Validation Error', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Validation Error', 'Passwords do not match.');
+      return;
+    }
+
+    const user = {email, password};
+    dispatch(registration(user));
+    Alert.alert('Success', 'Registration successful.');
   };
 
   return (

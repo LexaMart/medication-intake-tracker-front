@@ -1,12 +1,12 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {logout} from '../../../store/slices/auth.slice';
+import {clearSession, logout} from '../../../store/slices/auth.slice';
 import {View, Text, TouchableOpacity, Dimensions} from 'react-native';
-import {RootState} from '../../../store';
+import {AppDispatch, RootState} from '../../../store';
 import {darkTheme, getStyles, lightTheme} from './styles';
 
 export default function CustomDrawerContent({navigation}: {navigation: any}) {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const theme = useSelector((state: RootState) => state.app.theme);
 
@@ -15,7 +15,7 @@ export default function CustomDrawerContent({navigation}: {navigation: any}) {
   const drawerWidth = Dimensions.get('window').width * 0.5;
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(clearSession());
     navigation.navigate('Login');
   };
 

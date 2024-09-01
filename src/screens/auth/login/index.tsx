@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import {View, TextInput, TouchableOpacity, Text, StatusBar} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../../store';
-import {saveSession} from '../../../store/slices/auth.slice';
 import {darkTheme, getStyles, lightTheme} from './styles';
+import {serverSignIn} from '../../../store/slices/auth.slice';
 
 export default function LoginScreen({navigation}: {navigation: any}) {
   const [email, setEmail] = useState('');
@@ -16,8 +16,8 @@ export default function LoginScreen({navigation}: {navigation: any}) {
   const styles = getStyles(theme);
 
   const handleLogin = () => {
-    const user = {email};
-    dispatch(saveSession(user));
+    const user = {email, password};
+    dispatch(serverSignIn(user));
   };
 
   return (

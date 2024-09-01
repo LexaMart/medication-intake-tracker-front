@@ -1,7 +1,10 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthState, User} from '../../shared/dto/store.dto';
-import {AppDispatch, AppThunk} from '..';
+import {AppThunk} from '..';
+import {loginUser, registerUser} from '../api/auth.api';
+import {Alert} from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const initialState: AuthState = {
   isLoggedIn: false,
@@ -29,12 +32,18 @@ const authSlice = createSlice({
 
 export const {login, logout, loadSession} = authSlice.actions;
 
-export const saveSession =
+export const registration =
   (user: User): AppThunk =>
   async dispatch => {
     try {
-      await AsyncStorage.setItem('@user', JSON.stringify(user));
+      const registeredUser = await registerUser(user);
+      await AsyncStorage.setItem('@user', JSON.stringify(registeredUser.email));
       dispatch(login(user));
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'success',
+        text1: 'Registration Successfull',
+      });
     } catch (e) {
       console.error('Failed to save session.', e);
     }
@@ -58,5 +67,31 @@ export const loadUserSession = (): AppThunk => async dispatch => {
     console.error('Failed to load session.', e);
   }
 };
+
+export const serverSignIn =
+  (userDto: User): AppThunk =>
+  async dispatch => {
+    try {
+      const user = await loginUser(userDto);
+
+      if (!user) {
+        Alert.alert('Provided data is wrong');
+        return;
+      }
+      await AsyncStorage.setItem('@user', JSON.stringify(user.email));
+      dispatch(login(user));
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'success',
+        text1: 'Login Successfull',
+      });
+    } catch (e) {
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text1: 'Verify Provided Data',
+      });
+    }
+  };
 
 export default authSlice.reducer;
