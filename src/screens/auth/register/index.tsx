@@ -12,6 +12,7 @@ import {AppDispatch, RootState} from '../../../store';
 import {darkTheme, getStyles, lightTheme} from './styles';
 import {validateEmail} from '../../../shared/utils/validateEmail';
 import {registration} from '../../../store/slices/auth.slice';
+import Toast from 'react-native-toast-message';
 
 export default function RegisterScreen({navigation}: {navigation: any}) {
   const [email, setEmail] = useState('');
@@ -26,23 +27,37 @@ export default function RegisterScreen({navigation}: {navigation: any}) {
 
   const handleRegister = () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Validation Error', 'All fields are required.');
+      Toast.show({
+        text1: 'Validation Error.',
+        text2: 'All fields are required.',
+        visibilityTime: 2000,
+        type: 'error',
+      });
       return;
     }
 
     if (!validateEmail(email)) {
-      Alert.alert('Validation Error', 'Please enter a valid email address.');
+      Toast.show({
+        text1: 'Validation Error.',
+        text2: 'Please enter a valid email address.',
+        visibilityTime: 2000,
+        type: 'error',
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Validation Error', 'Passwords do not match.');
+      Toast.show({
+        text1: 'Validation Error.',
+        text2: 'Passwords do not match.',
+        visibilityTime: 2000,
+        type: 'error',
+      });
       return;
     }
 
     const user = {email, password};
     dispatch(registration(user));
-    Alert.alert('Success', 'Registration successful.');
   };
 
   return (
