@@ -1,3 +1,5 @@
+import {MedicationDto} from './medication.dto';
+
 export interface User {
   email: string;
   password: string;
@@ -10,4 +12,5 @@ export interface AuthState {
 
 export interface AppState {
   theme: boolean;
+  medications: MedicationDto[];
 }

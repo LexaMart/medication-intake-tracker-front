@@ -1,10 +1,13 @@
+import {MedicationDto} from './../../shared/dto/medication.dto';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AppState} from '../../shared/dto/store.dto';
-import {AppDispatch} from '..';
+import {AppDispatch, AppThunk} from '..';
+import {addMedicationApi, setAmountApi} from '../api/medication.api';
 
 const initialState: AppState = {
   theme: true,
+  medications: [],
 };
 
 const appSlice = createSlice({
@@ -14,10 +17,21 @@ const appSlice = createSlice({
     setTheme: (state, action: PayloadAction<boolean>) => {
       state.theme = action.payload;
     },
+    addMedications: (state, action: PayloadAction<MedicationDto>) => {
+      state.medications = [...state.medications, action.payload];
+    },
+    updateMedication: (state, action: PayloadAction<MedicationDto>) => {
+      state.medications = state.medications.map(el => {
+        if (el.id == action.payload.id) {
+          el = action.payload;
+        }
+        return el;
+      });
+    },
   },
 });
 
-export const {setTheme} = appSlice.actions;
+export const {setTheme, addMedications, updateMedication} = appSlice.actions;
 
 export default appSlice.reducer;
 
@@ -40,3 +54,24 @@ export const saveTheme = (theme: boolean) => async (dispatch: AppDispatch) => {
     console.error('Failed to save theme', error);
   }
 };
+
+export const addMedicationThunk =
+  (medication: MedicationDto): AppThunk =>
+  async dispatch => {
+    try {
+      const response = await addMedicationApi(medication);
+      dispatch(addMedications(response));
+    } catch (error) {}
+  };
+
+export const updateMedicationThunk =
+  (medication: MedicationDto): AppThunk =>
+  async dispatch => {
+    try {
+      const response = await setAmountApi(
+        medication.amountOfIntakes,
+        medication.id,
+      );
+      dispatch(updateMedication(response));
+    } catch (error) {}
+  };
