@@ -82,6 +82,13 @@ export const getStyles = (theme: any) =>
       alignItems: 'center',
       marginBottom: 20,
     },
+    closeButton: {
+      backgroundColor: theme.counterButtonBackgroundColor,
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     counterButton: {
       backgroundColor: theme.counterButtonBackgroundColor,
       padding: 10,

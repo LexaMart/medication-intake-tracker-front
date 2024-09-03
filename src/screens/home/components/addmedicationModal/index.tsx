@@ -39,6 +39,7 @@ export default function AddMedicationModal({
         user?.id || '',
       ),
     );
+    onClose();
   };
 
   return (

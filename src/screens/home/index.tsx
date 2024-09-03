@@ -174,7 +174,9 @@ export default function HomeScreen() {
                 <Text style={styles.counterButtonText}>+</Text>
               </TouchableOpacity>
             </View>
-            <Button title="Close" onPress={closeModal} />
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+              <Text style={styles.counterButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

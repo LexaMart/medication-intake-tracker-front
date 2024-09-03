@@ -8,6 +8,7 @@ import {
   getUserMedicationApi,
   setAmountApi,
 } from '../api/medication.api';
+import Toast from 'react-native-toast-message';
 
 const initialState: AppState = {
   theme: true,
@@ -78,7 +79,18 @@ export const addMedicationThunk =
     try {
       const response = await addMedicationApi(medication, userId);
       dispatch(addMedications(response));
-    } catch (error) {}
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'success',
+        text1: 'Medication Added To The List',
+      });
+    } catch (error) {
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text1: 'Medication Addition To The List Failed',
+      });
+    }
   };
 
 export const updateMedicationThunk =
