@@ -1,8 +1,8 @@
 export type MedicationDto = {
   name: string;
   description: string;
-  amountOfIntakes: number;
-  destinationAmount: number;
-  dateOfIntake: Date;
+  count: number;
+  destinationCount: number;
+  intakeDate: Date;
   id: number;
 };

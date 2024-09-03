@@ -3,7 +3,11 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AppState} from '../../shared/dto/store.dto';
 import {AppDispatch, AppThunk} from '..';
-import {addMedicationApi, setAmountApi} from '../api/medication.api';
+import {
+  addMedicationApi,
+  getUserMedicationApi,
+  setAmountApi,
+} from '../api/medication.api';
 
 const initialState: AppState = {
   theme: true,
@@ -16,6 +20,9 @@ const appSlice = createSlice({
   reducers: {
     setTheme: (state, action: PayloadAction<boolean>) => {
       state.theme = action.payload;
+    },
+    setMedicationsList: (state, action: PayloadAction<MedicationDto[]>) => {
+      state.medications = action.payload;
     },
     addMedications: (state, action: PayloadAction<MedicationDto>) => {
       state.medications = [...state.medications, action.payload];
@@ -31,7 +38,8 @@ const appSlice = createSlice({
   },
 });
 
-export const {setTheme, addMedications, updateMedication} = appSlice.actions;
+export const {setTheme, addMedications, updateMedication, setMedicationsList} =
+  appSlice.actions;
 
 export default appSlice.reducer;
 
@@ -55,11 +63,20 @@ export const saveTheme = (theme: boolean) => async (dispatch: AppDispatch) => {
   }
 };
 
-export const addMedicationThunk =
-  (medication: MedicationDto): AppThunk =>
+export const getMedicationThunk =
+  (userId: string): AppThunk =>
   async dispatch => {
     try {
-      const response = await addMedicationApi(medication);
+      const response = await getUserMedicationApi(userId);
+      dispatch(setMedicationsList(response));
+    } catch (error) {}
+  };
+
+export const addMedicationThunk =
+  (medication: Omit<MedicationDto, 'id'>, userId: string): AppThunk =>
+  async dispatch => {
+    try {
+      const response = await addMedicationApi(medication, userId);
       dispatch(addMedications(response));
     } catch (error) {}
   };
@@ -68,10 +85,7 @@ export const updateMedicationThunk =
   (medication: MedicationDto): AppThunk =>
   async dispatch => {
     try {
-      const response = await setAmountApi(
-        medication.amountOfIntakes,
-        medication.id,
-      );
+      const response = await setAmountApi(medication);
       dispatch(updateMedication(response));
     } catch (error) {}
   };

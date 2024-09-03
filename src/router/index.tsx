@@ -9,7 +9,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/home';
 import CustomDrawerContent from './components/customDrawerContent';
-import {Dimensions, useColorScheme} from 'react-native';
+import {Dimensions} from 'react-native';
 import {darkTheme, lightTheme} from '../shared/themes/themes';
 import ThemeSwitcher from './components/themeSwitcher';
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -12,40 +12,28 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {getStyles, lightTheme, darkTheme} from './styles';
 import {AppDispatch, RootState} from '../../store';
-import AddMedicationModal from './components/addmedicationModal';
-import {updateMedicationThunk} from '../../store/slices/app.slice';
+import AddMedicationModal from './components/addMedicationModal';
+import {
+  getMedicationThunk,
+  setMedicationsList,
+  updateMedicationThunk,
+} from '../../store/slices/app.slice';
 import {MedicationDto} from '../../shared/dto/medication.dto';
-
-// Пример данных с сервера
-const medications: MedicationDto[] = [
-  {
-    id: 1,
-    name: 'Medication 1',
-    description: 'Description for Medication 1',
-    dateOfIntake: new Date('2024-09-01'),
-    destinationAmount: 5,
-    amountOfIntakes: 2,
-  },
-  {
-    id: 2,
-    name: 'Medication 2',
-    description: 'Description for Medication 2',
-    dateOfIntake: new Date('2024-09-02'),
-    destinationAmount: 3,
-    amountOfIntakes: 1,
-  },
-];
+import {loadUserSession} from '../../store/slices/auth.slice';
 
 const colors = ['#FFCDD2', '#C5E1A5', '#BBDEFB', '#FFECB3', '#D1C4E9'];
 
 export default function HomeScreen() {
   const dispatch: AppDispatch = useDispatch();
+  const medicationList = useSelector(
+    (store: RootState) => store.app.medications,
+  );
+  const user = useSelector((store: RootState) => store.auth.user);
+
   const [selectedMedication, setSelectedMedication] =
     useState<MedicationDto | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isAddModalVisible, setAddModalVisible] = useState(false);
-  const [medicationList, setMedicationList] =
-    useState<MedicationDto[]>(medications);
 
   const theme = useSelector((state: RootState) => state.app.theme)
     ? darkTheme
@@ -68,30 +56,30 @@ export default function HomeScreen() {
         dispatch(
           updateMedicationThunk({
             ...medication,
-            amountOfIntakes: medication.amountOfIntakes + 1,
+            count: medication.count + 1,
           }),
         );
         return {
           ...medication,
-          amountOfIntakes: medication.amountOfIntakes + 1,
+          count: medication.count + 1,
         };
       }
       return medication;
     });
-    setMedicationList(updatedList);
+    dispatch(setMedicationsList(updatedList));
   };
 
   const decreaseCount = () => {
-    if (selectedMedication && selectedMedication.amountOfIntakes > 0) {
+    if (selectedMedication && selectedMedication.count > 0) {
       dispatch(
         updateMedicationThunk({
           ...selectedMedication,
-          amountOfIntakes: selectedMedication.amountOfIntakes - 1,
+          count: selectedMedication.count - 1,
         }),
       );
       setSelectedMedication({
         ...selectedMedication,
-        amountOfIntakes: selectedMedication.amountOfIntakes - 1,
+        count: selectedMedication.count - 1,
       });
     }
   };
@@ -101,12 +89,12 @@ export default function HomeScreen() {
       dispatch(
         updateMedicationThunk({
           ...selectedMedication,
-          amountOfIntakes: selectedMedication.amountOfIntakes + 1,
+          count: selectedMedication.count + 1,
         }),
       );
       setSelectedMedication({
         ...selectedMedication,
-        amountOfIntakes: selectedMedication.amountOfIntakes + 1,
+        count: selectedMedication.count + 1,
       });
     }
   };
@@ -114,6 +102,16 @@ export default function HomeScreen() {
   const openAddModal = () => {
     setAddModalVisible(true);
   };
+
+  useEffect(() => {
+    dispatch(loadUserSession());
+  }, []);
+
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(getMedicationThunk(user?.id));
+    }
+  }, [user]);
 
   const renderMedicationItem = ({item, index}: any) => (
     <TouchableOpacity
@@ -126,7 +124,7 @@ export default function HomeScreen() {
       <Text style={styles.listItemText}>{item.name}</Text>
       <View style={styles.countContainer}>
         <Text style={styles.countText}>
-          {item.amountOfIntakes}/{item.destinationAmount}
+          {item.count}/{item.destinationCount}
         </Text>
         <TouchableOpacity
           style={styles.addButton}
@@ -156,7 +154,10 @@ export default function HomeScreen() {
               {selectedMedication?.description}
             </Text>
             <Text style={styles.modalDate}>
-              Date of Intake: {`${selectedMedication?.dateOfIntake}`}
+              Date of Intake:{' '}
+              {`${new Date(
+                selectedMedication?.intakeDate || '',
+              ).toDateString()}`}
             </Text>
             <View style={styles.modalCounterContainer}>
               <TouchableOpacity
@@ -165,7 +166,7 @@ export default function HomeScreen() {
                 <Text style={styles.counterButtonText}>-</Text>
               </TouchableOpacity>
               <Text style={styles.counterText}>
-                {selectedMedication?.amountOfIntakes}
+                {selectedMedication?.count}
               </Text>
               <TouchableOpacity
                 style={styles.counterButton}

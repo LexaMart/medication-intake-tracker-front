@@ -33,16 +33,16 @@ const authSlice = createSlice({
 export const {login, logout, loadSession} = authSlice.actions;
 
 export const registration =
-  (user: User): AppThunk =>
+  (user: Omit<User, 'id'>): AppThunk =>
   async dispatch => {
     try {
       const registeredUser = await registerUser(user);
-      await AsyncStorage.setItem('@user', JSON.stringify(registeredUser.email));
-      dispatch(login(user));
+      await AsyncStorage.setItem('@user', JSON.stringify(registeredUser));
+      dispatch(login(registeredUser));
       Toast.show({
         visibilityTime: 2000,
         type: 'success',
-        text1: 'Registration Successfull',
+        text1: 'Registration Successful',
       });
     } catch (e) {
       console.error('Failed to save session.', e);
@@ -69,7 +69,7 @@ export const loadUserSession = (): AppThunk => async dispatch => {
 };
 
 export const serverSignIn =
-  (userDto: User): AppThunk =>
+  (userDto: Omit<User, 'id'>): AppThunk =>
   async dispatch => {
     try {
       const user = await loginUser(userDto);
@@ -78,12 +78,12 @@ export const serverSignIn =
         Alert.alert('Provided data is wrong');
         return;
       }
-      await AsyncStorage.setItem('@user', JSON.stringify(user.email));
+      await AsyncStorage.setItem('@user', JSON.stringify(user));
       dispatch(login(user));
       Toast.show({
         visibilityTime: 2000,
         type: 'success',
-        text1: 'Login Successfull',
+        text1: 'Login Successful',
       });
     } catch (e) {
       Toast.show({
