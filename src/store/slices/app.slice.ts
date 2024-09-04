@@ -64,20 +64,20 @@ export const saveTheme = (theme: boolean) => async (dispatch: AppDispatch) => {
   }
 };
 
-export const getMedicationThunk =
-  (userId: string): AppThunk =>
-  async dispatch => {
-    try {
-      const response = await getUserMedicationApi(userId);
-      dispatch(setMedicationsList(response));
-    } catch (error) {}
-  };
+export const getMedicationThunk = (): AppThunk => async dispatch => {
+  try {
+    const response = await getUserMedicationApi();
+    dispatch(setMedicationsList(response));
+  } catch (error) {
+    console.error('Failed to load medications', error);
+  }
+};
 
 export const addMedicationThunk =
-  (medication: Omit<MedicationDto, 'id'>, userId: string): AppThunk =>
+  (medication: Omit<MedicationDto, 'id'>): AppThunk =>
   async dispatch => {
     try {
-      const response = await addMedicationApi(medication, userId);
+      const response = await addMedicationApi(medication);
       dispatch(addMedications(response));
       Toast.show({
         visibilityTime: 2000,
@@ -99,5 +99,7 @@ export const updateMedicationThunk =
     try {
       const response = await setAmountApi(medication);
       dispatch(updateMedication(response));
-    } catch (error) {}
+    } catch (error) {
+      console.error('Failed to update medication', error);
+    }
   };

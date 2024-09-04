@@ -28,16 +28,13 @@ export default function AddMedicationModal({
 
   const handleCreateMedication = () => {
     dispatch(
-      addMedicationThunk(
-        {
-          name,
-          description,
-          destinationCount: +destinationAmount || 1,
-          intakeDate,
-          count: 0,
-        },
-        user?.id || '',
-      ),
+      addMedicationThunk({
+        name,
+        description,
+        destinationCount: +destinationAmount || 1,
+        intakeDate,
+        count: 0,
+      }),
     );
     onClose();
   };

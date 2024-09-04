@@ -22,6 +22,7 @@ const authSlice = createSlice({
     logout: state => {
       state.isLoggedIn = false;
       state.user = null;
+      AsyncStorage.removeItem('token');
     },
     loadSession: (state, action: PayloadAction<User | null>) => {
       state.isLoggedIn = !!action.payload;
@@ -45,7 +46,11 @@ export const registration =
         text1: 'Registration Successful',
       });
     } catch (e) {
-      console.error('Failed to save session.', e);
+      Toast.show({
+        visibilityTime: 2000,
+        type: 'error',
+        text1: 'Registration Failed',
+      });
     }
   };
 
@@ -73,7 +78,6 @@ export const serverSignIn =
   async dispatch => {
     try {
       const user = await loginUser(userDto);
-
       if (!user) {
         Alert.alert('Provided data is wrong');
         return;
@@ -89,7 +93,7 @@ export const serverSignIn =
       Toast.show({
         visibilityTime: 2000,
         type: 'error',
-        text1: 'Verify Provided Data',
+        text1: 'Login Failed',
       });
     }
   };

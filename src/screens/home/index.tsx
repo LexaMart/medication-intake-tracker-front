@@ -108,9 +108,7 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(getMedicationThunk(user?.id));
-    }
+    dispatch(getMedicationThunk());
   }, [user]);
 
   const renderMedicationItem = ({item, index}: any) => (
