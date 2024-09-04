@@ -59,3 +59,8 @@ The client application consists of three screens: **Login**, **Register**, and *
 - **Styling:** Indication of reaching the entered number of intakes.
 - **Add Loader:** Loader during session loading so the user doesn't see the login screen when entering the app.
 - **UI/UX Improvement:** Enhance user interface and experience.
+
+
+
+
+### Приложения протестировано на Android устройстве
